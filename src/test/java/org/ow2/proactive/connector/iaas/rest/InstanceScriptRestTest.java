@@ -31,8 +31,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -43,6 +41,7 @@ import org.ow2.proactive.connector.iaas.fixtures.InstanceScriptFixture;
 import org.ow2.proactive.connector.iaas.model.InstanceScript;
 import org.ow2.proactive.connector.iaas.model.ScriptResult;
 import org.ow2.proactive.connector.iaas.service.InstanceScriptService;
+import org.springframework.http.HttpStatus;
 
 import com.google.common.collect.Lists;
 
@@ -71,8 +70,8 @@ public class InstanceScriptRestTest {
                                                     "instanceId",
                                                     "tag",
                                                     InstanceScriptFixture.getInstanceScriptAsaString(new String[] {}))
-                                     .getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+                                     .getStatusCode(),
+                   is(HttpStatus.OK));
 
         verify(instanceScriptService, times(1)).executeScriptOnInstance(Mockito.anyString(),
                                                                         Mockito.anyString(),
@@ -93,8 +92,8 @@ public class InstanceScriptRestTest {
                                                     null,
                                                     "instanceTag",
                                                     InstanceScriptFixture.getInstanceScriptAsaString(new String[] {}))
-                                     .getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+                                     .getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceScriptService, times(1)).executeScriptOnInstanceTag(Mockito.anyString(),
                                                                            Mockito.anyString(),
                                                                            Mockito.any(InstanceScript.class));

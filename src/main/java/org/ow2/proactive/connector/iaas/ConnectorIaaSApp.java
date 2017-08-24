@@ -26,18 +26,55 @@
 package org.ow2.proactive.connector.iaas;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
+import com.google.common.base.Predicates;
+
 import lombok.NoArgsConstructor;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @NoArgsConstructor
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "org.ow2.proactive.connector.iaas" })
 @PropertySources({ @PropertySource(value = "classpath:application.properties"),
                    @PropertySource(value = "file:${proactive.home}/config/connector-iaas/application.properties", ignoreResourceNotFound = true) })
+@EnableSwagger2
+@EnableAutoConfiguration
+@ComponentScan(basePackages = "org.ow2.proactive.connector.iaas")
 public class ConnectorIaaSApp {
+
+    //TODO: Add the Swagger redirect controller (check the workflow-catalog or scheduling-api for that)
+
+    @Bean
+    public Docket connectorIaaSApi() {
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
+                                                      .groupName("connector-iaas")
+                                                      .select()
+                                                      .apis(RequestHandlerSelectors.any())
+                                                      .paths(PathSelectors.any())
+                                                      .paths(Predicates.not(PathSelectors.regex("/error")))
+                                                      .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder().title("Connector IaaS Service API")
+                                   .description("The purpose of this service is to provide a generic interface to public cloud providers.")
+                                   .licenseUrl("https://github.com/ow2-proactive/cloud-automation-service/blob/master/LICENSE")
+                                   .version("1.0")
+                                   .build();
+    }
+
     public static void main(String[] args) throws InterruptedException {
 
         SpringApplication.run(ConnectorIaaSApp.class, args);

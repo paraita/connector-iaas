@@ -31,8 +31,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -41,6 +39,7 @@ import org.mockito.MockitoAnnotations;
 import org.ow2.proactive.connector.iaas.fixtures.InstanceFixture;
 import org.ow2.proactive.connector.iaas.model.Instance;
 import org.ow2.proactive.connector.iaas.service.InstanceService;
+import org.springframework.http.HttpStatus;
 
 import com.google.common.collect.Sets;
 
@@ -81,59 +80,57 @@ public class InstanceRestTest {
 
     @Test
     public void testCreateInstance() {
-        assertThat(instanceRest.createInstance("infrastructureId", instanceStringFixture).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.createInstance("infrastructureId", instanceStringFixture).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceService, times(1)).createInstance("infrastructureId", instanceFixture);
     }
 
     @Test
     public void testListAllInstances() {
         when(instanceService.getAllInstances("infrastructureId")).thenReturn(Sets.newHashSet());
-        assertThat(instanceRest.getInstances("infrastructureId", null, null, true).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.getInstances("infrastructureId", null, null, true).getStatusCode(), is(HttpStatus.OK));
         verify(instanceService, times(1)).getAllInstances("infrastructureId");
     }
 
     @Test
     public void testListCreatedInstances() {
         when(instanceService.getAllInstances("infrastructureId")).thenReturn(Sets.newHashSet());
-        assertThat(instanceRest.getInstances("infrastructureId", null, null, null).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.getInstances("infrastructureId", null, null, null).getStatusCode(), is(HttpStatus.OK));
         verify(instanceService, times(1)).getCreatedInstances("infrastructureId");
     }
 
     @Test
     public void testGetInstanceById() {
-        assertThat(instanceRest.getInstances("infrastructureId", "instanceID", null, null).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.getInstances("infrastructureId", "instanceID", null, null).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceService, times(1)).getInstanceById("infrastructureId", "instanceID");
     }
 
     @Test
     public void testGetInstanceByTag() {
-        assertThat(instanceRest.getInstances("infrastructureId", null, "instanceTAG", null).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.getInstances("infrastructureId", null, "instanceTAG", null).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceService, times(1)).getInstanceByTag("infrastructureId", "instanceTAG");
     }
 
     @Test
     public void testDeleteInstance() {
-        assertThat(instanceRest.deleteInstance("infrastructureId", "instanceID", "instanceTAG", null).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.deleteInstance("infrastructureId", "instanceID", "instanceTAG", null).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceService, times(1)).deleteInstance("infrastructureId", "instanceID");
     }
 
     @Test
     public void testDeleteInstanceByTag() {
-        assertThat(instanceRest.deleteInstance("infrastructureId", null, "instanceTAG", null).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.deleteInstance("infrastructureId", null, "instanceTAG", null).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceService, times(1)).deleteInstanceByTag("infrastructureId", "instanceTAG");
     }
 
     @Test
     public void testDeleteCreatedInstances() {
-        assertThat(instanceRest.deleteInstance("infrastructureId", null, null, true).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(instanceRest.deleteInstance("infrastructureId", null, null, true).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(instanceService, times(1)).deleteCreatedInstances("infrastructureId");
     }
 

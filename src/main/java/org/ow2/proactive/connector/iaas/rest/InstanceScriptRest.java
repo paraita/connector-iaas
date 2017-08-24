@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -41,24 +39,26 @@ import org.ow2.proactive.connector.iaas.model.InstanceScript;
 import org.ow2.proactive.connector.iaas.model.ScriptResult;
 import org.ow2.proactive.connector.iaas.service.InstanceScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.aol.micro.server.rest.jackson.JacksonUtil;
 import com.google.common.collect.Lists;
 
 
-@Path("/infrastructures")
-@Component
+@RestController
+@RequestMapping(value = "/infrastructures")
 public class InstanceScriptRest {
 
     @Autowired
     private InstanceScriptService instanceScriptService;
 
-    @POST
-    @Path("{infrastructureId}/instances/scripts")
+    @RequestMapping(value = "{infrastructureId}/instances/scripts", method = RequestMethod.POST)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response executeScript(@PathParam("infrastructureId") String infrastructureId,
+    public ResponseEntity<?> executeScript(@PathParam("infrastructureId") String infrastructureId,
             @QueryParam("instanceId") String instanceId, @QueryParam("instanceTag") String instanceTag,
             final String instanceScriptJson) {
 
@@ -72,7 +72,7 @@ public class InstanceScriptRest {
                                                                                                                                               instanceTag,
                                                                                                                                               instanceScript)));
 
-        return Response.ok(scriptResults).build();
+        return ResponseEntity.ok(scriptResults);
     }
 
 }

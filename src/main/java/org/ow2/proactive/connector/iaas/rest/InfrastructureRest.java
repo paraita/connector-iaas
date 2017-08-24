@@ -27,11 +27,6 @@ package org.ow2.proactive.connector.iaas.rest;
 
 import java.util.Optional;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -41,35 +36,36 @@ import javax.ws.rs.core.Response;
 import org.ow2.proactive.connector.iaas.model.Infrastructure;
 import org.ow2.proactive.connector.iaas.service.InfrastructureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.aol.micro.server.rest.jackson.JacksonUtil;
 
 
-@Path("/infrastructures")
-@Component
+@RestController
+@RequestMapping(value = "/infrastructures")
 public class InfrastructureRest {
 
     @Autowired
     private InfrastructureService infrastructureService;
 
-    @GET
+    @RequestMapping(method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllSupportedInfrastructure() {
-        return Response.ok(infrastructureService.getAllSupportedInfrastructure()).build();
+    public ResponseEntity<?> getAllSupportedInfrastructure() {
+        return ResponseEntity.ok(infrastructureService.getAllSupportedInfrastructure());
     }
 
-    @GET
-    @Path("/{infrastructureId}")
+    @RequestMapping(value = "/{infrastructureId}", method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInfrastructure(@PathParam("infrastructureId") String infrastructureId) {
-        return Response.ok(infrastructureService.getInfrastructure(infrastructureId)).build();
+    public ResponseEntity<?> getInfrastructure(@PathParam("infrastructureId") String infrastructureId) {
+        return ResponseEntity.ok(infrastructureService.getInfrastructure(infrastructureId));
     }
 
-    @DELETE
-    @Path("/{infrastructureId}")
+    @RequestMapping(value = "/{infrastructureId}", method = RequestMethod.DELETE)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteInfrastructureById(@PathParam("infrastructureId") String infrastructureId,
+    public ResponseEntity<?> deleteInfrastructureById(@PathParam("infrastructureId") String infrastructureId,
             @QueryParam("deleteInstances") Boolean deleteInstances) {
         Optional.ofNullable(infrastructureService.getInfrastructure(infrastructureId)).ifPresent(infrastructure -> {
             if (Optional.ofNullable(deleteInstances).orElse(false)) {
@@ -78,15 +74,14 @@ public class InfrastructureRest {
                 infrastructureService.deleteInfrastructure(infrastructure);
             }
         });
-        return Response.ok(infrastructureService.getAllSupportedInfrastructure()).build();
+        return ResponseEntity.ok(infrastructureService.getAllSupportedInfrastructure());
     }
 
-    @POST
-    @Consumes("application/json")
+    @RequestMapping(method = RequestMethod.POST)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerInfrastructure(final String infrastructureJson) {
+    public ResponseEntity<?> registerInfrastructure(final String infrastructureJson) {
         Infrastructure infrastructure = JacksonUtil.convertFromJson(infrastructureJson, Infrastructure.class);
-        return Response.ok(infrastructureService.registerInfrastructure(infrastructure)).build();
+        return ResponseEntity.ok(infrastructureService.registerInfrastructure(infrastructure));
     }
 
 }

@@ -31,10 +31,6 @@ import java.util.Optional;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -44,49 +40,50 @@ import javax.ws.rs.core.Response;
 import org.ow2.proactive.connector.iaas.model.Instance;
 import org.ow2.proactive.connector.iaas.service.InstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.aol.micro.server.rest.jackson.JacksonUtil;
 
 
-@Path("/infrastructures")
-@Component
+@RestController
+@RequestMapping(value = "/infrastructures")
 public class InstanceRest {
 
     @Autowired
     private InstanceService instanceService;
 
-    @POST
+    @RequestMapping(value = "{infrastructureId}/instances", method = RequestMethod.POST)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json")
-    @Path("{infrastructureId}/instances")
-    public Response createInstance(@PathParam("infrastructureId") String infrastructureId, final String instanceJson) {
+    public ResponseEntity<?> createInstance(@PathParam("infrastructureId") String infrastructureId,
+            final String instanceJson) {
         Instance instance = JacksonUtil.convertFromJson(instanceJson, Instance.class);
-        return Response.ok(instanceService.createInstance(infrastructureId, instance)).build();
+        return ResponseEntity.ok(instanceService.createInstance(infrastructureId, instance));
     }
 
-    @GET
-    @Path("{infrastructureId}/instances")
+    @RequestMapping(value = "{infrastructureId}/instances", method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstances(@PathParam("infrastructureId") String infrastructureId,
+    public ResponseEntity<?> getInstances(@PathParam("infrastructureId") String infrastructureId,
             @QueryParam("instanceId") String instanceId, @QueryParam("instanceTag") String instanceTag,
             @QueryParam("allInstances") Boolean allInstances) {
 
         if (Optional.ofNullable(instanceId).isPresent()) {
-            return Response.ok(instanceService.getInstanceById(infrastructureId, instanceId)).build();
+            return ResponseEntity.ok(instanceService.getInstanceById(infrastructureId, instanceId));
         } else if (Optional.ofNullable(instanceTag).isPresent()) {
-            return Response.ok(instanceService.getInstanceByTag(infrastructureId, instanceTag)).build();
+            return ResponseEntity.ok(instanceService.getInstanceByTag(infrastructureId, instanceTag));
         } else if (Optional.ofNullable(allInstances).isPresent() && allInstances) {
-            return Response.ok(instanceService.getAllInstances(infrastructureId)).build();
+            return ResponseEntity.ok(instanceService.getAllInstances(infrastructureId));
         } else {
-            return Response.ok(instanceService.getCreatedInstances(infrastructureId)).build();
+            return ResponseEntity.ok(instanceService.getCreatedInstances(infrastructureId));
         }
     }
 
-    @DELETE
-    @Path("{infrastructureId}/instances")
+    @RequestMapping(value = "{infrastructureId}/instances", method = RequestMethod.DELETE)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteInstance(@PathParam("infrastructureId") String infrastructureId,
+    public ResponseEntity<?> deleteInstance(@PathParam("infrastructureId") String infrastructureId,
             @QueryParam("instanceId") String instanceId, @QueryParam("instanceTag") String instanceTag,
             @QueryParam("allCreatedInstances") Boolean allCreatedInstances) {
 
@@ -98,13 +95,12 @@ public class InstanceRest {
             instanceService.deleteCreatedInstances(infrastructureId);
         }
 
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @POST
-    @Path("{infrastructureId}/instances/publicIp")
+    @RequestMapping(value = "{infrastructureId}/instances/publicIp", method = RequestMethod.POST)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPublicIp(@PathParam("infrastructureId") String infrastructureId,
+    public ResponseEntity<?> createPublicIp(@PathParam("infrastructureId") String infrastructureId,
             @QueryParam("instanceId") String instanceId, @QueryParam("instanceTag") String instanceTag,
             @QueryParam("desiredIp") String optionalDesiredIp) {
         Map<String, String> response = new HashMap<String, String>();
@@ -117,13 +113,12 @@ public class InstanceRest {
             throw new ClientErrorException("The parameter \"instanceId\" and \"instanceTag\" are  missing.",
                                            Response.Status.BAD_REQUEST);
         }
-        return Response.ok(response).build();
+        return ResponseEntity.ok(response);
     }
 
-    @DELETE
-    @Path("{infrastructureId}/instances/publicIp")
+    @RequestMapping(value = "{infrastructureId}/instances/publicIp", method = RequestMethod.DELETE)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removePublicIp(@PathParam("infrastructureId") String infrastructureId,
+    public ResponseEntity<?> removePublicIp(@PathParam("infrastructureId") String infrastructureId,
             @QueryParam("instanceId") String instanceId, @QueryParam("instanceTag") String instanceTag,
             @QueryParam("desiredIp") String optionalDesiredIp) {
 
@@ -136,7 +131,7 @@ public class InstanceRest {
                                            Response.Status.BAD_REQUEST);
         }
 
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
 }

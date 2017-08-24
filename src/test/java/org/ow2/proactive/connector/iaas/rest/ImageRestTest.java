@@ -40,6 +40,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ow2.proactive.connector.iaas.rest.ImageRest;
 import org.ow2.proactive.connector.iaas.service.ImageService;
+import org.springframework.http.HttpStatus;
 
 import com.google.common.collect.Sets;
 
@@ -59,7 +60,7 @@ public class ImageRestTest {
     @Test
     public void testListAllImage() {
         when(imageService.getAllImages("infrastructureId")).thenReturn(Sets.newHashSet());
-        assertThat(imageRest.listAllImage("infrastructureId").getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(imageRest.listAllImage("infrastructureId").getStatusCode(), is(HttpStatus.OK));
         verify(imageService, times(1)).getAllImages("infrastructureId");
     }
 }

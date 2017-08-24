@@ -31,8 +31,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -45,6 +43,7 @@ import org.ow2.proactive.connector.iaas.model.Infrastructure;
 import org.ow2.proactive.connector.iaas.model.Instance;
 import org.ow2.proactive.connector.iaas.service.InfrastructureService;
 import org.ow2.proactive.connector.iaas.service.InstanceService;
+import org.springframework.http.HttpStatus;
 
 import jersey.repackaged.com.google.common.collect.Maps;
 
@@ -93,15 +92,14 @@ public class InfrastructureRestTest {
     @Test
     public void testGetAllSupportedInfrastructure() {
         when(infrastructureService.getAllSupportedInfrastructure()).thenReturn(Maps.newHashMap());
-        assertThat(infrastructureRest.getAllSupportedInfrastructure().getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(infrastructureRest.getAllSupportedInfrastructure().getStatusCode(), is(HttpStatus.OK));
         verify(infrastructureService, times(1)).getAllSupportedInfrastructure();
     }
 
     @Test
     public void testRegisterInfrastructure() {
-        assertThat(infrastructureRest.registerInfrastructure(infrastructureStringFixture).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(infrastructureRest.registerInfrastructure(infrastructureStringFixture).getStatusCode(),
+                   is(HttpStatus.OK));
         verify(infrastructureService, times(1)).registerInfrastructure(infrastructureFixture);
     }
 
@@ -113,8 +111,8 @@ public class InfrastructureRestTest {
         assertThat(infrastructureRest.deleteInfrastructureById(InfrastructureFixture.getSimpleInfrastructure("sometype")
                                                                                     .getId(),
                                                                null)
-                                     .getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+                                     .getStatusCode(),
+                   is(HttpStatus.OK));
         verify(infrastructureService,
                times(1)).deleteInfrastructure(InfrastructureFixture.getSimpleInfrastructure("sometype"));
         verify(infrastructureService, times(1)).getAllSupportedInfrastructure();
@@ -122,8 +120,7 @@ public class InfrastructureRestTest {
 
     @Test
     public void testDeleteInfrastructureByIdNotInCache() {
-        assertThat(infrastructureRest.deleteInfrastructureById("openstack", null).getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(infrastructureRest.deleteInfrastructureById("openstack", null).getStatusCode(), is(HttpStatus.OK));
         verify(infrastructureService, times(0)).deleteInfrastructure(Mockito.any(Infrastructure.class));
         verify(infrastructureService, times(1)).getAllSupportedInfrastructure();
     }
@@ -138,8 +135,8 @@ public class InfrastructureRestTest {
         assertThat(infrastructureRest.deleteInfrastructureById(InfrastructureFixture.getSimpleInfrastructure("sometype")
                                                                                     .getId(),
                                                                true)
-                                     .getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+                                     .getStatusCode(),
+                   is(HttpStatus.OK));
 
         verify(infrastructureService,
                times(1)).deleteInfrastructureWithCreatedInstances(InfrastructureFixture.getSimpleInfrastructure("sometype"));
@@ -148,8 +145,7 @@ public class InfrastructureRestTest {
 
     @Test
     public void testGetInfrastructureById() {
-        assertThat(infrastructureRest.getInfrastructure("openstack").getStatus(),
-                   is(Response.Status.OK.getStatusCode()));
+        assertThat(infrastructureRest.getInfrastructure("openstack").getStatusCode(), is(HttpStatus.OK));
         verify(infrastructureService, times(1)).getInfrastructure(("openstack"));
     }
 
