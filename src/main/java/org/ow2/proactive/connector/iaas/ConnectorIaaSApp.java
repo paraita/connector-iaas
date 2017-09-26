@@ -64,6 +64,7 @@ public class ConnectorIaaSApp {
                                                       .apis(RequestHandlerSelectors.any())
                                                       .paths(PathSelectors.any())
                                                       .paths(Predicates.not(PathSelectors.regex("/error")))
+                                                      .paths(Predicates.not(PathSelectors.regex("/")))
                                                       .build();
     }
 
