@@ -54,8 +54,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @ComponentScan(basePackages = "org.ow2.proactive.connector.iaas")
 public class ConnectorIaaSApp {
 
-    //TODO: Add the Swagger redirect controller (check the workflow-catalog or scheduling-api for that)
-
     @Bean
     public Docket connectorIaaSApi() {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())

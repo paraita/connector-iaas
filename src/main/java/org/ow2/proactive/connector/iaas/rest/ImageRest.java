@@ -25,16 +25,19 @@
  */
 package org.ow2.proactive.connector.iaas.rest;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
+import org.ow2.proactive.connector.iaas.model.Image;
 import org.ow2.proactive.connector.iaas.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.ApiOperation;
 
 
 @RestController
@@ -44,11 +47,10 @@ public class ImageRest {
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping(value = "{infrastructureId}/images", method = RequestMethod.GET)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ResponseEntity<?> listAllImage(@PathParam("infrastructureId") String infrastructureId) {
+    @ApiOperation(value = "Get the list of images for a given infrastructure")
+    @RequestMapping(value = "{infrastructureId}/images", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<Image>> listAllImages(@PathVariable("infrastructureId") String infrastructureId) {
         return ResponseEntity.ok(imageService.getAllImages(infrastructureId));
-
     }
 
 }
